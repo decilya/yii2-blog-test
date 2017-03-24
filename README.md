@@ -5,7 +5,7 @@ Yii2 Blog Test (basic)
 
 Среда: apache2, php7, mysql 5.7
 Стартовая БД: yii2-blog-test.sql
-yii2-blog-test, root, qwerty
+[yii2-blog-test, root, qwerty]
 
 Импортируем БД и выполняем миграции:
 1) переходим в корневой каталог с файлом yii.php
