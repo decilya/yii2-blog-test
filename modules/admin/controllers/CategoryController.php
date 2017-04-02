@@ -22,7 +22,37 @@ class CategoryController extends DefaultController
 
     public function actionList()
     {
-        return $this->render('list');
+
+        $categories = new Category();
+
+        return $this->render('list', [
+            'categories' => $categories,
+        ]);
     }
 
+    public function actionCreate()
+    {
+        $category = new Category();
+
+        $post = Yii::$app->request->post();
+
+        if (!empty($post)){
+            echo "<pre>";
+            echo 'тыщ-тыщ';
+            print_r($post);
+            var_export($post);
+            echo "</pre>";
+
+            $title = $post['Category']['title'];
+
+            if ($category->create($title)){
+                echo 'успех';
+            }
+        }
+
+        return $this->render('form', [
+            'category' => $category,
+        ]);
+
+    }
 }

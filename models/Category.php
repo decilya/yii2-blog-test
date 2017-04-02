@@ -39,7 +39,20 @@ class Category extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
+            'title' => 'Название',
         ];
+    }
+
+    static function create($name)
+    {
+        $category = new Category();
+        $category->title = $name;
+
+        if ($category->save()){
+            return true;
+        } else {
+            // @todo вернуть ошибку, но не забыть, что тогда будет возращать не false
+            return false;
+        }
     }
 }
