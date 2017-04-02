@@ -48,11 +48,13 @@ class Category extends \yii\db\ActiveRecord
         $category = new Category();
         $category->title = $name;
 
-        if ($category->save()){
-            return true;
-        } else {
-            // @todo вернуть ошибку, но не забыть, что тогда будет возращать не false
-            return false;
-        }
+        /*
+         * @todo Добавить поле created_at - миграция, модель
+         * $category->created_at = time();
+         */
+
+        $category->save();
+
+        return $category;
     }
 }

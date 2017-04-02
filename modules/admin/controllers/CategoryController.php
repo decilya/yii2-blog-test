@@ -36,22 +36,25 @@ class CategoryController extends DefaultController
 
         $post = Yii::$app->request->post();
 
+        $errors = null;
         if (!empty($post)){
-            echo "<pre>";
-            echo 'тыщ-тыщ';
-            print_r($post);
-            var_export($post);
-            echo "</pre>";
 
             $title = $post['Category']['title'];
 
-            if ($category->create($title)){
-                echo 'успех';
+            $newCategory = $category->create($title);
+
+            if ($newCategory->hasErrors()){
+                $errors = $newCategory->errors;
+            } else {
+                $errors = array();
             }
+
+            $category->save();
         }
 
         return $this->render('form', [
             'category' => $category,
+            'errors' => $errors,
         ]);
 
     }
