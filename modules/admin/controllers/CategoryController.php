@@ -32,29 +32,36 @@ class CategoryController extends DefaultController
 
     public function actionCreate()
     {
-        $category = new Category();
-
-        $post = Yii::$app->request->post();
-
-        $errors = null;
-        if (!empty($post)){
-
-            $title = $post['Category']['title'];
-
-            $newCategory = $category->create($title);
-
-            if ($newCategory->hasErrors()){
-                $errors = $newCategory->errors;
-            } else {
-                $errors = array();
-            }
-
-            $category->save();
-        }
-
+    	
+       	$category = new Category();
+       	
+       	if (Yii::$app->request->post('Category')) {
+       		
+    		$category->attributes = Yii::$app->request->post('Category');
+    		$category->created_at = time();
+    		
+    		if ($category->save()) {
+    				
+    			//* @todo Разобратся с мгновенными собощениями в Yii2 */
+    			$session = Yii::$app->session;
+    			$session->setFlash('success', 'Категория добавлена успешно!');
+    			$result = $session->hasFlash('success');
+    			if  ($result) {
+    				echo $session->getFlash('success');
+    			}			
+    		} else {
+    			$session = Yii::$app->session;
+    			$session->setFlash('error', 'Ошибка. При добавлении категории.');
+    			$result = $session->hasFlash('error');
+    			if  ($result) {
+    				echo $session->getFlash('error');
+    			}
+    		}
+    		
+    	}
+    		
         return $this->render('form', [
             'category' => $category,
-            'errors' => $errors,
         ]);
 
     }

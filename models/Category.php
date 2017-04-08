@@ -26,9 +26,9 @@ class Category extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'required'],
-            [['title'], 'string', 'max' => 250],
-            [['title'], 'unique'],
+            [['name'], 'required'],
+            [['name'], 'string', 'max' => 250],
+            [['name'], 'unique'],
         ];
     }
 
@@ -39,19 +39,15 @@ class Category extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Название',
+            'name' => 'Название',
         ];
     }
 
     static function create($name)
     {
         $category = new Category();
-        $category->title = $name;
-
-        /*
-         * @todo Добавить поле created_at - миграция, модель
-         * $category->created_at = time();
-         */
+        $category->name = $name;
+        $category->created_at = time();
 
         $category->save();
 
