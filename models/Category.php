@@ -8,7 +8,8 @@ use Yii;
  * This is the model class for table "category".
  *
  * @property integer $id
- * @property string $title
+ * @property string $name
+ * @property integer $created_at
  */
 class Category extends \yii\db\ActiveRecord
 {
@@ -29,6 +30,7 @@ class Category extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['name'], 'string', 'max' => 250],
             [['name'], 'unique'],
+        	[['created_at'], 'integer'],
         ];
     }
 
@@ -40,6 +42,7 @@ class Category extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Название',
+        	'created_at' => 'Дата создания',
         ];
     }
 
