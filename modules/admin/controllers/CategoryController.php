@@ -2,67 +2,129 @@
 
 namespace app\modules\admin\controllers;
 
-/**
- * @todo разобратся с тем что такое AccessControl и что точно мы тут юзамем, ничего лишнего в коде быть не должно
- */
 use Yii;
-use yii\filters\AccessControl;
+use app\models\CategoryRecord;
+use app\models\CategorySearchModel;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use app\models\Category;
 
 
 /**
- * Category controller for the `admin` module
+ * CategoryController implements the CRUD actions for CategoryRecord model.
  */
-class CategoryController extends DefaultController
+class CategoryController extends Controller
 {
-
-    public $defaultAction = 'list';
-
-    public function actionList()
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
     {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
 
-        $categories = new Category();
+    /**
+     * Lists all CategoryRecord models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new CategorySearchModel();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('list', [
-            'categories' => $categories,
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
+    /**
+     * Displays a single CategoryRecord model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Creates a new CategoryRecord model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
     public function actionCreate()
     {
-    	
-       	$category = new Category();
-       	
-       	if (Yii::$app->request->post('Category')) {
-       		
-    		$category->attributes = Yii::$app->request->post('Category');
-    		$category->created_at = time();
-    		
-    		if ($category->save()) {
-    				
-    			//* @todo Разобратся с мгновенными собощениями в Yii2 */
-    			$session = Yii::$app->session;
-    			$session->setFlash('success', 'Категория добавлена успешно!');
-    			$result = $session->hasFlash('success');
-    			if  ($result) {
-    				echo $session->getFlash('success');
-    			}			
-    		} else {
-    			$session = Yii::$app->session;
-    			$session->setFlash('error', 'Ошибка. При добавлении категории.');
-    			$result = $session->hasFlash('error');
-    			if  ($result) {
-    				echo $session->getFlash('error');
-    			}
-    		}
-    		
-    	}
-    		
-        return $this->render('form', [
-            'category' => $category,
-        ]);
+        $model = new CategoryRecord();
 
+        if ($model->load(Yii::$app->request->post())){
+        	
+        	$model->created_at = time();
+        	
+        	if ($model->save()) {
+	            return $this->redirect(['view', 'id' => $model->id]);
+	        }
+        }
+        
+        return $this->render('create', [
+        		'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing CategoryRecord model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Deletes an existing CategoryRecord model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the CategoryRecord model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return CategoryRecord the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = CategoryRecord::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }
